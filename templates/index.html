@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management Tool</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Task Management</h1>
+
+    <!-- Add Task Form -->
+    <form action="/add_task" method="POST" class="task-form">
+        <input type="text" name="taskName" placeholder="Task Name" required>
+        <input type="number" name="taskDuration" placeholder="Duration (hours)" required>
+        <select name="taskStatus" required>
+            <option value="not-started">Not Started</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+        </select>
+        <select name="taskDay" required>
+            <option value="monday">Monday</option>
+            <option value="tuesday">Tuesday</option>
+            <option value="wednesday">Wednesday</option>
+            <option value="thursday">Thursday</option>
+            <option value="friday">Friday</option>
+            <option value="saturday">Saturday</option>
+            <option value="sunday">Sunday</option>
+        </select>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <div id="task-list">
+        {% for day, tasks in tasks.items() %}
+        <div class="task-day">
+            <h2>{{ day.capitalize() }}:</h2>
+            <div class="task-box">
+                {% if tasks %}
+                    <div class="task-boxes">
+                        {% for task in tasks %}
+                        <div class="task-item">
+                            <div class="task-header">
+                                <span class="task-name">{{ task.name }}</span>
+                                <span class="task-duration">Duration: {{ task.duration }} hrs</span>
+                            </div>
+                            <div class="task-status">
+                                <form action="/update_status/{{ day }}/{{ loop.index0 }}" method="POST">
+                                    <select name="taskStatus" onchange="this.form.submit()">
+                                        <option value="not-started" {% if task.status == 'not-started' %}selected{% endif %}>Not Started</option>
+                                        <option value="in-progress" {% if task.status == 'in-progress' %}selected{% endif %}>In Progress</option>
+                                        <option value="completed" {% if task.status == 'completed' %}selected{% endif %}>Completed</option>
+                                    </select>
+                                </form>
+                            </div>
+                            <form action="/delete_task/{{ day }}/{{ loop.index0 }}" method="POST">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No tasks for this day.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
