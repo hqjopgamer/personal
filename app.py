@@ -16,6 +16,10 @@ def save_tasks(tasks):
     with open('tasks.json', 'w') as file:
         json.dump(tasks, file)
 
+@app.route('/health', methods=['GET'])
+def health_check():
+    return "Healthy", 200
+
 @app.route('/')
 def index():
     tasks = get_tasks()
