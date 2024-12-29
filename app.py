@@ -2,24 +2,23 @@ from flask import Flask, render_template, request, redirect, url_for
 import json
 import os
 
-
-
 app = Flask(__name__)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+# Dynamic path management for tasks.json file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+tasks_file = os.path.join(BASE_DIR, 'tasks.json')
 
 # Helper function to get tasks
 def get_tasks():
     try:
-        with open('tasks.json', 'r') as file:
+        with open(tasks_file, 'r') as file:
             return json.load(file)
     except FileNotFoundError:
         return {}
 
 # Helper function to save tasks
 def save_tasks(tasks):
-    with open('tasks.json', 'w') as file:
+    with open(tasks_file, 'w') as file:
         json.dump(tasks, file)
 
 @app.route('/health', methods=['GET'])
@@ -80,5 +79,6 @@ def delete_task(task_day, task_index):
     save_tasks(tasks)
     return redirect(url_for('index'))
 
+# Run the Flask app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
